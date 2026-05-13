@@ -16,7 +16,7 @@ Prerequisiti:
   pip install paho-mqtt python-telegram-bot
 
 Uso:
-  python3 bot_muschio.py
+  python monitor_muschio.py
 =============================================================================
 """
 
@@ -38,11 +38,11 @@ from telegram.ext import (
 # =============================================================================
 
 # Telegram
-TELEGRAM_TOKEN   = "IL_TUO_TOKEN_QUI"   # Token da @BotFather
+TELEGRAM_TOKEN   = "8755285010:AAHvqt-ZDa-89-vn3ry_ujlWyupDNFkzohk"   # Token da @BotFather
 TELEGRAM_CHAT_ID = None  # Viene impostato automaticamente al primo /start
 
 # HiveMQ Cloud
-MQTT_HOST = "69f128f236014b8689ffec3406c3f58d.s1.eu.hivemq.cloud.s2.eu.hivemq.cloud"
+MQTT_HOST = "69f128f236014b8689ffec3406c3f58d.s1.eu.hivemq.cloud"
 MQTT_PORT = 8883
 MQTT_USER = "Muschio"
 MQTT_PASS = "Muschio32"

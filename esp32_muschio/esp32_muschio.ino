@@ -3,18 +3,19 @@
 // Broker: HiveMQ Cloud (MQTT over TLS)
 // Controllo remoto: Bot Telegram via topic MQTT
 // =============================================================================
+#include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include <Wire.h>
 #include <Adafruit_BME680.h>
 
-const char* WIFI_SSID      = "NOME_HOTSPOT";
-const char* WIFI_PASSWORD  = "PASSWORD_HOTSPOT";
-const char* MQTT_HOST      = "XXXXXXXX.s2.eu.hivemq.cloud";
+const char* WIFI_SSID      = "Fitter Happier";
+const char* WIFI_PASSWORD  = "More productive";
+const char* MQTT_HOST      = "69f128f236014b8689ffec3406c3f58d.s1.eu.hivemq.cloud";
 const int   MQTT_PORT      = 8883;
-const char* MQTT_USER      = "TUO_USERNAME";
-const char* MQTT_PASS      = "TUA_PASSWORD";
-const char* MQTT_CLIENT_ID = "ESP32_Muschio";
+const char* MQTT_USER      = "Muschio";
+const char* MQTT_PASS      = "Muschio32";
+const char* MQTT_CLIENT_ID = "Esp32_Muschio";
 const char* TOPIC_DATI     = "progetto/muschio/dati";
 const char* TOPIC_COMANDO  = "progetto/muschio/comando";
 const char* TOPIC_STATUS   = "progetto/muschio/status";
@@ -22,7 +23,7 @@ const char* TOPIC_STATUS   = "progetto/muschio/status";
 const unsigned long WIFI_TIMEOUT_MS  = 15000;
 const unsigned long MQTT_TIMEOUT_MS  = 10000;
 const unsigned long COMANDO_WAIT_MS  = 3000;
-const int DEFAULT_DELAY_MIN          = 15;
+const int DEFAULT_DELAY_MIN          = 1;
 const int DELAY_MIN_CONSENTITO       = 1;
 const int DELAY_MAX_CONSENTITO       = 720;
 
@@ -200,9 +201,12 @@ bool connectMQTT() {
   unsigned long t = millis();
   while (!mqttClient.connected()) {
     if (millis() - t > MQTT_TIMEOUT_MS) return false;
+    wifiClient.setInsecure(); // bypass verifica certificato (solo per test)
     if (mqttClient.connect(MQTT_CLIENT_ID, MQTT_USER, MQTT_PASS)) {
       Serial.println("[MQTT] Connesso a HiveMQ Cloud!");
     } else {
+    Serial.print("[MQTT] Fallito, rc=");
+    Serial.print(mqttClient.state()); // Questo ci dirà il CODICE errore
       delay(2000);
     }
   }
