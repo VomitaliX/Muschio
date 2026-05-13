@@ -42,10 +42,10 @@ TELEGRAM_TOKEN   = "IL_TUO_TOKEN_QUI"   # Token da @BotFather
 TELEGRAM_CHAT_ID = None  # Viene impostato automaticamente al primo /start
 
 # HiveMQ Cloud
-MQTT_HOST = "69f128f236014b8689ffec3406c3f58d.s1.eu.hivemq.cloud.s2.eu.hivemq.cloud"
+MQTT_HOST = "XXXXXXXX.s2.eu.hivemq.cloud"
 MQTT_PORT = 8883
-MQTT_USER = "Muschio"
-MQTT_PASS = "Muschio32"
+MQTT_USER = "TUO_USERNAME"
+MQTT_PASS = "TUA_PASSWORD"
 
 # Topic
 TOPIC_DATI     = "progetto/muschio/dati"
@@ -62,7 +62,11 @@ ultimi_dati: dict = {}          # Ultimi dati ricevuti dall'ESP32
 telegram_app = None             # Riferimento all'app Telegram (impostato nel main)
 chat_id_registrati: set = set() # Chat ID autorizzati (tutti quelli che fanno /start)
 
-CSV_HEADERS = ["timestamp", "temperatura_C", "umidita_aria_pct", "pressione_hPa", "gas_voc_kOhm", "umidita_suolo_raw", "umidita_suolo_pct", "bme_ok", "delay_min"]
+CSV_HEADERS = [
+    "timestamp", "temperatura_C", "umidita_aria_pct",
+    "pressione_hPa", "gas_voc_kOhm", "umidita_suolo_raw",
+    "umidita_suolo_pct", "bme_ok", "delay_min"
+]
 
 # =============================================================================
 # LOGGING
