@@ -61,6 +61,8 @@ CSV_FILENAME = "log_muschio.csv"
 ultimi_dati: dict = {}          # Ultimi dati ricevuti dall'ESP32
 telegram_app = None             # Riferimento all'app Telegram (impostato nel main)
 chat_id_registrati: set = set() # Chat ID autorizzati (tutti quelli che fanno /start)
+invio_automatico: bool = True  # True = manda dati automaticamente su Telegram
+main_loop = None
 
 CSV_HEADERS = ["timestamp", "temperatura_C", "umidita_aria_pct", "pressione_hPa", "gas_voc_kOhm", "umidita_suolo_raw", "umidita_suolo_pct", "bme_ok", "delay_min"]
 
@@ -189,7 +191,8 @@ def on_message(client, userdata, msg):
 
         # Invia i dati su Telegram a tutti i chat registrati
         testo = formatta_dati(dati, timestamp)
-        invia_telegram_async(testo)
+        if invio_automatico:
+            invia_telegram_async(testo)
 
     elif topic == TOPIC_STATUS:
         # Messaggi di stato dall'ESP32 (conferme comandi, benvenuto, ecc.)
@@ -214,15 +217,8 @@ def invia_telegram_async(testo: str):
             except Exception as e:
                 log.error(f"Errore invio Telegram a {cid}: {e}")
 
-    # Schedula la coroutine nel loop asyncio dell'app Telegram
     import asyncio
-    try:
-        loop = telegram_app.bot._request[0]._session.connector._loop  # type: ignore
-    except Exception:
-        loop = None
-
-    if loop and loop.is_running():
-        asyncio.run_coroutine_threadsafe(_invia(), loop)
+    asyncio.run_coroutine_threadsafe(_invia(), main_loop)
 
 # =============================================================================
 # MQTT CLIENT — Setup
@@ -321,18 +317,34 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "🌿 *Muschio Monitor — Guida comandi*\n\n"
         "/start — registra questa chat per ricevere i dati\n"
         "/stato — mostra gli ultimi dati ricevuti\n"
+        "/auto_on  — attiva invio automatico dati\n"
+        "/auto_off — disattiva invio automatico dati\n"
         "/delay N — imposta intervallo campionamento a N minuti\n"
-        "           (minimo 1, massimo 720)\n"
+        "(minimo 1, massimo 720)\n"
         "/help — mostra questa guida\n\n"
         "I dati vengono inviati automaticamente ad ogni campionamento dell'ESP32.",
-        parse_mode="Markdown"
     )
+
+async def cmd_auto_on(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global invio_automatico
+    invio_automatico = True
+    chat_id_registrati.add(update.effective_chat.id)
+    await update.message.reply_text("✅ Invio automatico *attivato*. Riceverai i dati ad ogni campionamento.", parse_mode="Markdown")
+
+async def cmd_auto_off(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    global invio_automatico
+    invio_automatico = False
+    chat_id_registrati.add(update.effective_chat.id)
+    await update.message.reply_text("🔕 Invio automatico *disattivato*. Usa /stato per vedere i dati quando vuoi.", parse_mode="Markdown")
 
 # =============================================================================
 # MAIN
 # =============================================================================
 
 def main():
+    import asyncio
+    global main_loop
+    main_loop = asyncio.get_event_loop()
     global telegram_app
 
     log.info("=" * 50)
@@ -351,6 +363,8 @@ def main():
     telegram_app.add_handler(CommandHandler("start", cmd_start))
     telegram_app.add_handler(CommandHandler("stato", cmd_stato))
     telegram_app.add_handler(CommandHandler("help",  cmd_help))
+    telegram_app.add_handler(CommandHandler("auto_on",  cmd_auto_on))
+    telegram_app.add_handler(CommandHandler("auto_off", cmd_auto_off))
 
     # /delay ha bisogno del mqtt_client — usiamo una lambda
     telegram_app.add_handler(
