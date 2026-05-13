@@ -38,7 +38,7 @@ from telegram.ext import (
 # =============================================================================
 
 # Telegram
-TELEGRAM_TOKEN   = "8755285010:AAHvqt-ZDa-89-vn3ry_ujlWyupDNFkzohk"   # Token da @BotFather
+TELEGRAM_TOKEN   = "8599485292:AAGVEnCsPNWeRIFCwZXrHITRDvVUpUiRZ9k"   # Token da @BotFather
 TELEGRAM_CHAT_ID = None  # Viene impostato automaticamente al primo /start
 
 # HiveMQ Cloud
