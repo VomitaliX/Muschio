@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 =============================================================================
 TPI MUSCHIO — Bot Telegram + Bridge MQTT (bot_muschio.py)
@@ -26,6 +25,7 @@ import os
 import logging
 import threading
 from datetime import datetime
+import config
 
 import paho.mqtt.client as mqtt
 from telegram import Update
@@ -38,22 +38,22 @@ from telegram.ext import (
 # =============================================================================
 
 # Telegram
-TELEGRAM_TOKEN   = "8599485292:AAGVEnCsPNWeRIFCwZXrHITRDvVUpUiRZ9k"   # Token da @BotFather
-TELEGRAM_CHAT_ID = None  # Viene impostato automaticamente al primo /start
+TELEGRAM_TOKEN   = config.TELEGRAM_TOKEN
+TELEGRAM_CHAT_ID = config.TELEGRAM_CHAT_ID
 
 # HiveMQ Cloud
-MQTT_HOST = "69f128f236014b8689ffec3406c3f58d.s1.eu.hivemq.cloud"
-MQTT_PORT = 8883
-MQTT_USER = "Muschio"
-MQTT_PASS = "Muschio32"
+MQTT_HOST = config.MQTT_HOST
+MQTT_PORT = config.MQTT_PORT
+MQTT_USER = config.MQTT_USER
+MQTT_PASS = config.MQTT_PASS
 
 # Topic
-TOPIC_DATI     = "progetto/muschio/dati"
-TOPIC_COMANDO  = "progetto/muschio/comando"
-TOPIC_STATUS   = "progetto/muschio/status"
+TOPIC_DATI     = config.TOPIC_DATI
+TOPIC_COMANDO  = config.TOPIC_COMANDO
+TOPIC_STATUS   = config.TOPIC_STATUS
 
 # CSV
-CSV_FILENAME = "log_muschio.csv"
+CSV_FILENAME = config.CSV_FILENAME
 
 # =============================================================================
 # STATO GLOBALE
