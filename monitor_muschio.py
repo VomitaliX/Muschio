@@ -19,6 +19,7 @@ Uso:
 =============================================================================
 """
 
+import asyncio
 import json
 import csv
 import os
@@ -344,7 +345,8 @@ async def cmd_auto_off(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     import asyncio
     global main_loop
-    main_loop = asyncio.get_event_loop()
+    main_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(main_loop)
     global telegram_app
 
     log.info("=" * 50)
